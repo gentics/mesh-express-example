@@ -1,8 +1,9 @@
-var express = require('express')
-var request = require('request');
-var rp = require('request-promise');
-var nunjucks = require('nunjucks');
-var app = express();
+"use strict";
+const express = require('express')
+const request = require('request');
+const rp = require('request-promise');
+const nunjucks = require('nunjucks');
+const app = express();
 
 nunjucks.configure('views', {
   autoescape: true,
@@ -45,13 +46,13 @@ app.get("/", (req, res) => {
   });
 });
 
-// Webroot path route which consumes all other paths in order to fetch the corresponing Gentics Mesh node and render its contents.
+// Webroot path route which consumes all other paths in order to fetch the corresponding Gentics Mesh node and render its contents.
 app.get('*', (req, res) => {
   let path = req.params[0];
   console.log("Handling path {" + path + "}");
 
   // 1. Use the webroot endpoint to resolve the path to a Gentics Mesh node. The node information will later 
-  // be used to determine which twig template to use in order to render the page.
+  // be used to determine which nunjucks template to use in order to render the page.
   let uri = BASEURI + "demo/webroot/" + encodeURIComponent(path) + "?resolveLinks=short";
   let options = {
     uri: uri,
@@ -61,14 +62,14 @@ app.get('*', (req, res) => {
     encoding: null
   }
   rp(options).then(response => {
-    var contentType = response.headers['content-type'];
+    let contentType = response.headers['content-type'];
 
     // 2. Check whether the found node represents an image. Otherwise continue with template specific code.
     if (contentType.startsWith("image/")) {
       res.contentType(contentType).send(response.body);
     } else {
       let elementJson = response.body;
-      uuid = elementJson.uuid;
+      let uuid = elementJson.uuid;
       let schemaName = elementJson.schema.name;
       let navigationPromise = loadBreadcrumbData();
 
