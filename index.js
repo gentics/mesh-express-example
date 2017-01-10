@@ -16,83 +16,97 @@ var BASEURI = "http://admin:admin@localhost:8080/api/v1/";
  * @return {Promise} Promise with breadcrumb information
  */
 function loadBreadcrumbData() {
-  let uri = BASEURI + "demo/navroot/?maxDepth=1&resolveLinks=short";
   let options = {
-    uri:  uri,
+    uri: BASEURI + "demo/navroot/?maxDepth=1&resolveLinks=short",
     json: true
-  } 
-
+  }
   return rp(options).then(result => result.root.children);
 }
 
 /**
  * Load a list of children for the specified node.
  * @param uuid Uuid of the node
+ * @return {Promise} Promise with children information for the located node
  */
 function loadChildren(uuid) {
-  let uri = BASEURI + "demo/nodes/" + uuid + "/children?expandAll=true&resolveLinks=short";
-  return rp(uri).then(result => result.data);
+  let options = {
+    uri: BASEURI + "demo/nodes/" + uuid + "/children?expandAll=true&resolveLinks=short",
+    json: true
+  }
+  return rp(options).then(result => result.data);
 }
 
-app.get("/", function (req, res) {
-  loadBreadcrumbData().then(function (data) {
+app.get("/", (req, res) => {
+  loadBreadcrumbData().then(data => {
     res.render('welcome.njk', {
       breadcrumb: data
     });
   });
 });
 
-app.get('*', function (req, res) {
+app.get('*', (req, res) => {
   let path = req.params[0];
-  console.log("Path: " + path);
+  console.log("Handling path {" + path + "}");
 
   // 1. Use the webroot endpoint to resolve the path to a Gentics Mesh node. The node information will later 
   // be used to determine which twig template to use in order to render the page.
   let uri = BASEURI + "demo/webroot/" + encodeURIComponent(path) + "?resolveLinks=short";
   let options = {
     uri: uri,
-    resolveWithFullResponse: true
+    resolveWithFullResponse: true,
+    json: true,
+    // Enable direct buffer handling for the request api in order to allow binary data passthru for images.
+    encoding: null
   }
 
-  rp(options).then(function (resolvedElement) {
+  rp(options).then(response => {
+    var contentType = response.headers['content-type'];
 
     // 2. Check whether the found node represents an image. Otherwise continue with template specific code.
-    if (substr(response.content_type, 0, 6) === "image/") {
-      res.send(resolvedElement);
+    if (contentType.startsWith("image/")) {
+      res.contentType(contentType).send(response.body);
     } else {
-      uuid = resolvedElement.uuid;
-
-      let schemaName = resolvedElement.schema.name;
-      let navigationData = loadBreadcrumbData();
+      let elementJson = response.body;
+      uuid = elementJson.uuid;
+      let schemaName = elementJson.schema.name;
+      let navigationPromise = loadBreadcrumbData();
 
       switch (schemaName) {
         // Check whether the loaded node is an vehicle node. In those cases a detail page should be shown.
         case "vehicle":
-          Promise.all([children, navigationData]).then(results => {
+          console.log("Handling vehicle request");
+          navigationPromise.then(navData => {
             res.render('productDetail.njk', {
-              'breadcrumb': results[1],
-              'product': resolvedElement
+              'breadcrumb': navData,
+              'product': elementJson
             });
           });
           break;
 
         // Show the product list page for category nodes
         case "category":
-          let children = loadChildren(uuid);
-          res.render('productList.njk', {
-            'breadcrumb': navigationData,
-            'category': resolvedElement,
-            'products': children
+          console.log("Handling category request");
+          let childrenPromise = loadChildren(uuid);
+          Promise.all([navigationPromise, childrenPromise]).then(data => {
+            const [navigationData, childrenData] = data;
+            res.render('productList.njk', {
+              'breadcrumb': navigationData,
+              'category': elementJson,
+              'products': childrenData
+            });
+          }).catch(err => {
+            console.log("Error while resolving promises {" + err.message + "}");
+            res.status(500).send("Oh uh, something went wrong");
           });
           break;
 
         // Show 404 or error for other nodes
         default:
-          res.send("Unknown element type");
+          res.status(404).send("Unknown element type for given path");
           break;
       }
     }
-  }).catch(function (err) {
+  }).catch(err => {
     if (err.statusCode == 404) {
       res.status(404).send("Page not found");
     } else {
@@ -102,9 +116,7 @@ app.get('*', function (req, res) {
   });
 });
 
+// Start the ExpressJS server on port 3000
 app.listen(3000, function () {
   console.log('Example app listening on port 3000!');
 });
-
-
-
