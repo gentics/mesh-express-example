@@ -36,6 +36,7 @@ function loadChildren(uuid) {
   return rp(options).then(result => result.data);
 }
 
+// Dedicated route for the welcome page
 app.get("/", (req, res) => {
   loadBreadcrumbData().then(data => {
     res.render('welcome.njk', {
@@ -44,6 +45,7 @@ app.get("/", (req, res) => {
   });
 });
 
+// Webroot path route which consumes all other paths in order to fetch the corresponing Gentics Mesh node and render its contents.
 app.get('*', (req, res) => {
   let path = req.params[0];
   console.log("Handling path {" + path + "}");
@@ -58,7 +60,6 @@ app.get('*', (req, res) => {
     // Enable direct buffer handling for the request api in order to allow binary data passthru for images.
     encoding: null
   }
-
   rp(options).then(response => {
     var contentType = response.headers['content-type'];
 
