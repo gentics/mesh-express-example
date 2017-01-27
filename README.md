@@ -14,7 +14,7 @@ cd mesh-express-example
 # Install needed dependencies 
 npm install
 
-# Downlad Gentics Mesh from http://getmesh.io/Download and start it
+# Download Gentics Mesh from http://getmesh.io/Download and start it
 java -jar mesh-demo-0.6.xx.jar
 
 # Start the express server
