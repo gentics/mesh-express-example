@@ -1,7 +1,7 @@
 {
   "name": "mesh-express-example",
   "version": "1.0.0",
-  "description": "Gentics Mesh ExpressJS Example",
+  "description": "Gentics Mesh Express Example",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
