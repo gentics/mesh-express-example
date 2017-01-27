@@ -1,6 +1,6 @@
-# Gentics Mesh ExpressJS Example
+# Gentics Mesh Express Example
 
-This example shows how to use [Gentics Mesh](http://getmesh.io) in combination with [ExpressJS](http://expressjs.com/). 
+This example shows how to use [Gentics Mesh](http://getmesh.io) in combination with [Express](http://expressjs.com/). 
 
 The Gentics Mesh Webroot API is being used to located the requested content. The JSON information of that content is used to render various [Nunjucks](https://mozilla.github.io/nunjucks/) templates.
 
