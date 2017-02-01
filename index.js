@@ -74,7 +74,7 @@ app.get('*', (req, res) => {
       let navigationPromise = loadBreadcrumbData();
 
       switch (schemaName) {
-        // Check whether the loaded node is an vehicle node. In those cases a detail page should be shown.
+        // Check whether the loaded node is a vehicle node. In those cases a detail page should be shown.
         case "vehicle":
           console.log("Handling vehicle request");
           navigationPromise.then(navData => {
