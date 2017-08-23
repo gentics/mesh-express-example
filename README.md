@@ -2,7 +2,7 @@
 
 This example shows how to use [Gentics Mesh](http://getmesh.io) in combination with [Express](http://expressjs.com/). 
 
-The Gentics Mesh Webroot API is being used to located the requested content. The JSON information of that content is used to render various [Nunjucks](https://mozilla.github.io/nunjucks/) templates.
+The Gentics Mesh Webroot API is being used to located the requested content and serve binaries. The GraphQL API enables to combine previously multiple REST requests and reduce the response payload. The JSON information of that content is used to render various [Nunjucks](https://mozilla.github.io/nunjucks/) templates.
 
 ## Getting Started
 
@@ -22,4 +22,3 @@ node index.js
 
 # Access http://localhost:3000 in your browser
 ```
-
