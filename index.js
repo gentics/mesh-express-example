@@ -10,6 +10,8 @@ nunjucks.configure('views', {
   express: app
 });
 
+// You can also directly connect to our demo server
+// var BASEURI = "https://demo.getmesh.io/api/v1/";
 var BASEURI = "http://localhost:8080/api/v1/";
 
 /**
@@ -44,7 +46,7 @@ function loadTopNav() {
   },
     json: true
   };
-  return rp(options);
+  return rp(options).then(data => data.data);
 }
 
 /**
@@ -66,8 +68,9 @@ function loadViaGraphQL(path) {
     uri: BASEURI + "demo/graphql",
     method: "POST",
   	body: {
-      query:  
-      `{
+      variables: { "path": "/" + path },
+      query:
+      `query($path: String) {
         # We need to load the children of the root node of the project. 
         # Those nodes will be used to construct our top navigation.
         project {
@@ -90,7 +93,7 @@ function loadViaGraphQL(path) {
           }
         }
         # Load the node with the specified path. This can either be a vehicle or a category.
-        node(path: "/`+path+`") {
+        node(path: $path) {
           uuid
           # Include the schema so that we can switch between our two schemas. 
           # E.g.: productDetail for vehicles and productList for categories nodes
@@ -138,14 +141,14 @@ function loadViaGraphQL(path) {
     },
     json: true
   };
-  return rp(options);
+  return rp(options).then(data => data.data);
 }
 
 // Dedicated route for the welcome page
 app.get("/", (req, res) => {
   loadTopNav().then(data => {
     res.render('welcome.njk', {
-      'navigation': data.data.project.rootNode.children.elements
+      'navigation': data.project.rootNode.children.elements
     });
   });
 });
@@ -172,14 +175,14 @@ app.get('*', (req, res) => {
   } else {
     let graphQLResponse = loadViaGraphQL(path).then(data => {
       console.log(JSON.stringify(data));
-      let schemaName=data.data.node.schema.name;
+      let schemaName = data.node.schema.name;
       switch (schemaName) {
         // Check whether the loaded node is a vehicle node. In those cases a detail page should be shown.
         case "vehicle":
           console.log("Handling vehicle request");
           res.render('productDetail.njk', {
-            'navigation': data.data.project.rootNode.children.elements,
-            'product': data.data.node
+            'navigation': data.project.rootNode.children.elements,
+            'product': data.node
           });
           break;
 
@@ -187,9 +190,9 @@ app.get('*', (req, res) => {
         case "category":
           console.log("Handling category request");
           res.render('productList.njk', {
-            'navigation': data.data.project.rootNode.children.elements,
-            'category': data.data.node,
-            'products': data.data.node.products.elements
+            'navigation': data.project.rootNode.children.elements,
+            'category': data.node,
+            'products': data.node.products.elements
           });
           break;
 

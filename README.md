@@ -1,20 +1,21 @@
 # Gentics Mesh Express Example
 
-This example shows how to use [Gentics Mesh](http://getmesh.io) in combination with [Express](http://expressjs.com/). 
+This example shows how to use [Gentics Mesh](https://getmesh.io) in combination with [Express](http://expressjs.com/). 
 
-The Gentics Mesh Webroot API is being used to located the requested content and serve binaries. The GraphQL API enables to combine previously multiple REST requests and reduce the response payload. The JSON information of that content is used to render various [Nunjucks](https://mozilla.github.io/nunjucks/) templates.
+The Gentics Mesh GraphQL API is used to located the requested content. The JSON information of that content is used to render various [Nunjucks](https://mozilla.github.io/nunjucks/) templates.
 
 ## Getting Started
 
 ```
 # Clone example project
 git clone git@github.com:gentics/mesh-express-example.git
+git checkout graphql
 cd mesh-express-example
 
 # Install needed dependencies 
 npm install
 
-# Download Gentics Mesh from http://getmesh.io/Download and start it
+# Download Gentics Mesh from https://getmesh.io/Download and start it
 java -jar mesh-demo-0.9.xx.jar
 
 # Start the express server
