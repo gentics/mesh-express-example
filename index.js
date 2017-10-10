@@ -32,7 +32,7 @@ function login() {
  */
 function loadBreadcrumbData() {
   let options = {
-    uri: BASEURI + "demo/navroot/?maxDepth=1&resolveLinks=short",
+    uri: BASEURI + "demo/navroot/?maxDepth=1&resolveLinks=short&version=published",
     jar: cookieJar, 
     json: true
   }
