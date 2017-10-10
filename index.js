@@ -18,7 +18,7 @@ var BASEURI = "http://localhost:8080/api/v1/";
  */
 function loadBreadcrumbData() {
   let options = {
-    uri: BASEURI + "demo/navroot/?maxDepth=1&resolveLinks=short",
+    uri: BASEURI + "demo/navroot/?maxDepth=1&resolveLinks=short&version=published",
     json: true
   }
   return rp(options).then(result => result.children);
@@ -31,7 +31,7 @@ function loadBreadcrumbData() {
  */
 function loadChildren(uuid) {
   let options = {
-    uri: BASEURI + "demo/nodes/" + uuid + "/children?expandAll=true&resolveLinks=short",
+    uri: BASEURI + "demo/nodes/" + uuid + "/children?expandAll=true&resolveLinks=short&version=published",
     json: true
   }
   return rp(options).then(result => result.data);
@@ -53,7 +53,7 @@ app.get('*', (req, res) => {
 
   // 1. Use the webroot endpoint to resolve the path to a Gentics Mesh node. The node information will later 
   // be used to determine which nunjucks template to use in order to render the page.
-  let uri = BASEURI + "demo/webroot/" + encodeURIComponent(path) + "?resolveLinks=short";
+  let uri = BASEURI + "demo/webroot/" + encodeURIComponent(path) + "?resolveLinks=short&version=published";
   let options = {
     uri: uri,
     resolveWithFullResponse: true,
