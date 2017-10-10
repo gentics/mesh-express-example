@@ -20,7 +20,7 @@ var BASEURI = "http://localhost:8080/api/v1/";
  */
 function loadTopNav() {
   let options = {
-    uri: BASEURI + "demo/graphql/",
+    uri: BASEURI + "demo/graphql?version=published",
     method: "POST",
     body: {
            query:
@@ -65,10 +65,10 @@ function isBinary(path) {
  */
 function loadViaGraphQL(path) {
   let options = {
-    uri: BASEURI + "demo/graphql",
+    uri: BASEURI + "demo/graphql?version=published",
     method: "POST",
   	body: {
-      variables: { "path": "/" + path },
+      variables: { "path": "/" + path},
       query:
       `query($path: String) {
         # We need to load the children of the root node of the project. 
@@ -174,7 +174,7 @@ app.get('*', (req, res) => {
     });
   } else {
     let graphQLResponse = loadViaGraphQL(path).then(data => {
-      console.log(JSON.stringify(data));
+      
       let schemaName = data.node.schema.name;
       switch (schemaName) {
         // Check whether the loaded node is a vehicle node. In those cases a detail page should be shown.
