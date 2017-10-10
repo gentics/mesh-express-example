@@ -46,7 +46,7 @@ function loadBreadcrumbData() {
  */
 function loadChildren(uuid) {
   let options = {
-    uri: BASEURI + "demo/nodes/" + uuid + "/children?expandAll=true&resolveLinks=short",
+    uri: BASEURI + "demo/nodes/" + uuid + "/children?expandAll=true&resolveLinks=short&version=published",
     jar: cookieJar,
     json: true
   }
@@ -71,7 +71,7 @@ login().then(loginResp => {
 
     // 1. Use the webroot endpoint to resolve the path to a Gentics Mesh node. The node information will later 
     // be used to determine which nunjucks template to use in order to render the page.
-    let uri = BASEURI + "demo/webroot/" + encodeURIComponent(path) + "?resolveLinks=short";
+    let uri = BASEURI + "demo/webroot/" + encodeURIComponent(path) + "?resolveLinks=short&version=published";
     let options = {
       uri: uri,
       jar: cookieJar,
